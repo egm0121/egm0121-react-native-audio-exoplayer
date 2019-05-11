@@ -1,0 +1,55 @@
+{
+  "_from": "react-native-audio-exoplayer",
+  "_id": "react-native-audio-exoplayer@1.0.2",
+  "_inBundle": false,
+  "_integrity": "sha512-kirsFvkHaKELojEoJyg2XkKdXUYBJOtySa1/rGaUOGi0AjDAIrINNOl8Ez47i9yWDe62BtNqLNjphysKRLcQEA==",
+  "_location": "/react-native-audio-exoplayer",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "react-native-audio-exoplayer",
+    "name": "react-native-audio-exoplayer",
+    "escapedName": "react-native-audio-exoplayer",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-native-audio-exoplayer/-/react-native-audio-exoplayer-1.0.2.tgz",
+  "_shasum": "9cf0e33ba8fe5607c3901acca830d26a2aa58b28",
+  "_spec": "react-native-audio-exoplayer",
+  "_where": "/Users/giuliodellorbo/Documents/dev/git/splitcloud",
+  "author": {
+    "name": "Pavlo Kyrylenko",
+    "email": "kirilenko.pavlo@gmail.com",
+    "url": "https://github.com/kyrylenko"
+  },
+  "bugs": {
+    "url": "https://github.com/kyrylenko/react-native-audio-exoplayer/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "React Native module for playing sound clips on Android using Google ExoPlayer",
+  "homepage": "https://github.com/kyrylenko/react-native-audio-exoplayer#readme",
+  "keywords": [
+    "react-native",
+    "react-component",
+    "sound",
+    "audio"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "react-native-audio-exoplayer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyrylenko/react-native-audio-exoplayer.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.2"
+}
