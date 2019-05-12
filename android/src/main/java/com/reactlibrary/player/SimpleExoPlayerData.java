@@ -284,6 +284,9 @@ class SimpleExoPlayerData extends PlayerData
 
   @Override
   public synchronized void release() {
+    if (mappingAudioProcessor != null){
+      mappingAudioProcessor = null;
+    }
     if (mSimpleExoPlayer != null) {
       mSimpleExoPlayer.release();
       mSimpleExoPlayer = null;
