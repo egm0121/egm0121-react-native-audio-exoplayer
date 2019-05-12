@@ -54,7 +54,7 @@ import java.io.IOException;
 import com.reactlibrary.AVModule;
 
 
-class TestAudioProcessor implements AudioProcessor {
+class StereoPanAudioProcessor implements AudioProcessor {
 
   private int channelCount;
   private int sampleRateHz;
@@ -70,12 +70,12 @@ class TestAudioProcessor implements AudioProcessor {
   /**
    * Creates a new processor that applies a channel mapping.
    */
-  public TestAudioProcessor() {
+  public StereoPanAudioProcessor() {
     buffer = EMPTY_BUFFER;
     outputBuffer = EMPTY_BUFFER;
     channelCount = Format.NO_VALUE;
     sampleRateHz = Format.NO_VALUE;
-    outputChannelVolumes = new short[] {0,1};
+    outputChannelVolumes = new short[] {1,1};
   }
 
   /**
@@ -88,6 +88,18 @@ class TestAudioProcessor implements AudioProcessor {
     pendingOutputChannels = outputChannels;
   }
 
+  public short[] setPanning(int panMode ){
+    if(panMode == -1){
+      outputChannelVolumes = new short[] {1,0};
+      return outputChannelVolumes;
+    }
+    if(panMode == 1){
+      outputChannelVolumes = new short[] {0,1}; 
+      return outputChannelVolumes;
+    }
+    outputChannelVolumes = new short[] {1,1};
+    return outputChannelVolumes;
+  }
   @Override
   public boolean configure(int sampleRateHz, int channelCount, @Encoding int encoding)
       throws UnhandledFormatException {
@@ -205,6 +217,7 @@ class SimpleExoPlayerData extends PlayerData
   private static final String IMPLEMENTATION_NAME = "SimpleExoPlayer";
 
   private SimpleExoPlayer mSimpleExoPlayer = null;
+  private StereoPanAudioProcessor mappingAudioProcessor;
   private String mOverridingExtension;
   private LoadCompletionListener mLoadCompletionListener = null;
   private Integer mLastPlaybackState = null;
@@ -239,13 +252,13 @@ class SimpleExoPlayerData extends PlayerData
     final Handler mainHandler = new Handler();
     final TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
     final TrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
-
+    mappingAudioProcessor = new StereoPanAudioProcessor();
+    // mappingAudioProcessor.setPanning(1);
     RenderersFactory renderersFactory = new DefaultRenderersFactory(mReactContext) {
       @Override
       public AudioProcessor[] buildAudioProcessors() {
-        TestAudioProcessor mappingAudioProcessor = new TestAudioProcessor();
         mappingAudioProcessor.setChannelMap(new int[] {0,1});
-        Log.d(TAG, "Setup using my TestAudioProcessor ! ");
+        Log.d(TAG, "Setup using my StereoPanAudioProcessor ! ");
         return new AudioProcessor[] {mappingAudioProcessor};
       }
     };
@@ -326,10 +339,10 @@ class SimpleExoPlayerData extends PlayerData
       mSimpleExoPlayer.setPlayWhenReady(false);
       stopUpdatingProgressIfNecessary();
     }
-
+     Log.d(TAG, "applyNewStatus setPanning" + mPan);
+    mappingAudioProcessor.setPanning((int) mPan);
     // Mute / update volume if it doesn't require a request of the audio focus.
     updateVolumeMuteAndDuck();
-
     // Seek
     if (newPositionMillis != null) {
       // TODO handle different timeline cases for streaming
