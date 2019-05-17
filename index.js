@@ -216,6 +216,21 @@ class Sound {
   async stopAsync() {
     return this.setStatusAsync({ positionMillis: 0, shouldPlay: false });
   };
+  async unloadAsync() {
+    return new Promise ((resolve, reject) => {
+      console.log('unloadAsync invoked')
+      NativeModules.ExponentAV.unloadForSound(this._key).then(() => {
+        this._loaded = false;
+        this._loading = false;
+        this._eventEmitter.removeListener(
+          'didUpdatePlaybackStatus',
+          this._internalStatusUpdateCallback
+        );
+        this._subscriptions = [];
+        resolve(true);
+      }).catch(reject);
+    });
+  }
   async setRateAsync(rate, shouldCorrectPitch) {
     return this.setStatusAsync({ rate, shouldCorrectPitch });
   };
@@ -279,8 +294,10 @@ class Sound {
     }
   };
 
+
   // Get status API
   getStatusAsync = async () => {
+    console.log('getStatusAsync');
     if (this._loaded) {
       return this._performOperationAndHandleStatusAsync(() =>
         NativeModules.ExponentAV.getStatusForSound(this._key)
