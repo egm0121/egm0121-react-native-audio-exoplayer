@@ -137,7 +137,7 @@ class Sound {
       //console.log('start processing ', source);
       const { nativeSource, fullInitialStatus }
         = await _getNativeSourceAndFullInitialStatusForLoadAsync(source, initialStatus);
-
+      console.log('loading sound started')
       // This is a workaround, since using load with resolve / reject seems to not work.
       return new Promise(
         function (resolve, reject) {
@@ -145,6 +145,7 @@ class Sound {
             key,
             status,
           ) => {
+            console.log('loading sound success')
             this._key = key;
             this._loaded = true;
             this._loading = false;
@@ -155,6 +156,7 @@ class Sound {
             resolve(status);
           };
           const loadError = (error) => {
+            console.log('error loading sound',error);
             this._loading = false;
             reject(new Error(error));
           };
