@@ -103,6 +103,7 @@ class Sound {
   constructor() {
     this._loaded = false;
     this._loading = false;
+    this._currSource = null;
     this._key = -1;
     this._subscriptions = [];
     this._lastStatusUpdate = null;
@@ -134,6 +135,7 @@ class Sound {
     }
     if (!this._loaded) {
       this._loading = true;
+      this._currSource = source;
       //console.log('start processing ', source);
       const { nativeSource, fullInitialStatus }
         = await _getNativeSourceAndFullInitialStatusForLoadAsync(source, initialStatus);
@@ -173,7 +175,12 @@ class Sound {
       throw new Error('The Sound is already loaded.');
     }
   };
-
+  isLoading(){
+    return this._loading;
+  }
+  getCurrentSource(){
+    return this._currSource;
+  }
   //API methods
   async setStatusAsync(status) {
     //      console.error('Requested position after replay has to be 0.');
@@ -224,6 +231,7 @@ class Sound {
       NativeModules.ExponentAV.unloadForSound(this._key).then(() => {
         this._loaded = false;
         this._loading = false;
+        this._currSource = null;
         this._eventEmitter.removeListener(
           'didUpdatePlaybackStatus',
           this._internalStatusUpdateCallback
@@ -299,7 +307,6 @@ class Sound {
 
   // Get status API
   getStatusAsync = async () => {
-    console.log('getStatusAsync');
     if (this._loaded) {
       return this._performOperationAndHandleStatusAsync(() =>
         NativeModules.ExponentAV.getStatusForSound(this._key)
