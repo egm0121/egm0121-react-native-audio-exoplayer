@@ -41,6 +41,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
+import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import java.nio.ByteBuffer;
@@ -265,21 +266,44 @@ class SimpleExoPlayerData extends PlayerData
     // Create the player
     mSimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
     mSimpleExoPlayer.addListener(this);
-
-    // Produces DataSource instances through which media data is loaded.
-    final DataSource.Factory dataSourceFactory = new SharedCookiesDataSourceFactory(mUri, mReactContext, Util.getUserAgent(mReactContext, "yourApplicationName"));
-
-    try {
+    final MediaSource source;
+    if (mUri.getScheme().equals("file") ) {
+       DataSpec dataSpec = new DataSpec(mUri);
+      final FileDataSource fileDataSource = new FileDataSource();
+      try {
+          fileDataSource.open(dataSpec);
+      } catch (FileDataSource.FileDataSourceException e) {
+          e.printStackTrace();
+      }
+      DataSource.Factory factory = new DataSource.Factory() {
+          @Override
+          public DataSource createDataSource() {
+              return fileDataSource;
+          }
+      };
+      source = new ExtractorMediaSource(fileDataSource.getUri(),
+                factory, new DefaultExtractorsFactory(), null, null);
+    } else {
+      // Produces DataSource instances through which media data is loaded.
+      final DataSource.Factory dataSourceFactory = new SharedCookiesDataSourceFactory(mUri, mReactContext, Util.getUserAgent(mReactContext, "yourApplicationName"));
       // This is the MediaSource representing the media to be played.
-      final MediaSource source = buildMediaSource(mUri, mOverridingExtension, mainHandler, dataSourceFactory);
-
-      // Prepare the player with the source.
+      source = buildMediaSource(mUri, mOverridingExtension, mainHandler, dataSourceFactory);
+    }
+   
+    try {
       mSimpleExoPlayer.prepare(source);
       setStatus(status, null);
-    } catch (IllegalStateException e) {
+    }  catch (IllegalStateException e) {
       Log.d(TAG, "pak exception when mSimpleExoPlayer.prepare");
       onFatalError(e);
     }
+    //   // Prepare the player with the source.
+    //   mSimpleExoPlayer.prepare(source);
+    //   setStatus(status, null);
+    // } catch (IllegalStateException e) {
+    //   Log.d(TAG, "pak exception when mSimpleExoPlayer.prepare");
+    //   onFatalError(e);
+    // }
   }
 
   @Override
