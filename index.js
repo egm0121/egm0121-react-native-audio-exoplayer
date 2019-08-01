@@ -110,6 +110,7 @@ class Sound {
     this._lastStatusUpdateTime = null;
     this._onPlaybackStatusUpdate = null;
     this._coalesceStatusUpdatesInMillis = 100;
+    this._errorCallback = () => {};
     this._eventEmitter = new NativeEventEmitter(NativeModules.ExponentAV);
   }
 
@@ -153,6 +154,7 @@ class Sound {
             this._loading = false;
             this._pan = this._pan || 0;
             NativeModules.ExponentAV.setErrorCallbackForSound(this._key, this._errorCallback);
+            console.log('setErrorCallbackForSound',this._key, this._errorCallback);
             this._subscribeToNativeStatusUpdateEvents();
             this._callOnPlaybackStatusUpdateForNewStatus(status);
             resolve(status);
@@ -182,6 +184,7 @@ class Sound {
     return this._currSource;
   }
   //API methods
+
   async setStatusAsync(status) {
     //      console.error('Requested position after replay has to be 0.');
     _throwErrorIfValuesOutOfBoundsInStatus(status);
@@ -321,7 +324,9 @@ class Sound {
     this._onPlaybackStatusUpdate = onPlaybackStatusUpdate;
     this.getStatusAsync();
   }
-
+  setOnPlaybackError(fn) {
+    this._errorCallback = fn;
+  }
 }
 
 module.exports = Sound;
