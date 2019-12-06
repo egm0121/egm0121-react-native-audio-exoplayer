@@ -103,6 +103,7 @@ class Sound {
   constructor() {
     this._loaded = false;
     this._loading = false;
+    this._loadTimeout = 4*1e3;
     this._currSource = null;
     this._key = -1;
     this._subscriptions = [];
@@ -140,15 +141,22 @@ class Sound {
       //console.log('start processing ', source);
       const { nativeSource, fullInitialStatus }
         = await _getNativeSourceAndFullInitialStatusForLoadAsync(source, initialStatus);
-      console.log('loading sound started')
+      console.log('loading sound started');
       // This is a workaround, since using load with resolve / reject seems to not work.
       return new Promise(
         function (resolve, reject) {
+          const loadTimeout = setTimeout(() => {
+            this._loading = false;
+            this._loaded = false;
+            this._currSource = null;
+            loadError('Loading Timeout');
+          }, this._loadTimeout);
           const loadSuccess = (
             key,
             status,
           ) => {
             console.log('loading sound success')
+            clearTimeout(loadTimeout);
             this._key = key;
             this._loaded = true;
             this._loading = false;
@@ -171,6 +179,7 @@ class Sound {
             loadSuccess,
             loadError
           );
+         
         }.bind(this)
       );
     } else {
