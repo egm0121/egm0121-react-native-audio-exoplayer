@@ -146,9 +146,6 @@ class Sound {
       return new Promise(
         function (resolve, reject) {
           const loadTimeout = setTimeout(() => {
-            this._loading = false;
-            this._loaded = false;
-            this._currSource = null;
             loadError('Loading Timeout');
           }, this._loadTimeout);
           const loadSuccess = (
@@ -170,6 +167,8 @@ class Sound {
           const loadError = (error) => {
             console.log('error loading sound',error);
             this._loading = false;
+            this._loaded = false;
+            this._currSource = null;
             reject(new Error(error));
           };
 
@@ -183,7 +182,7 @@ class Sound {
         }.bind(this)
       );
     } else {
-      throw new Error('The Sound is already loaded.');
+      throw new Error('The Sound is already loaded. _loaded=true');
     }
   };
   isLoading(){
