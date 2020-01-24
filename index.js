@@ -249,7 +249,18 @@ class Sound {
         );
         this._subscriptions = [];
         resolve(true);
-      }).catch(reject);
+      }).catch((err) => {
+        console.warn('unloadAsync failed, still clear loaded flag');
+        this._loaded = false;
+        this._loading = false;
+        this._currSource = null;
+        this._eventEmitter.removeListener(
+          'didUpdatePlaybackStatus',
+          this._internalStatusUpdateCallback
+        );
+        this._subscriptions = [];
+        reject(err);
+      });
     });
   }
   async setRateAsync(rate, shouldCorrectPitch) {
