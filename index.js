@@ -250,7 +250,7 @@ class Sound {
         this._subscriptions = [];
         resolve(true);
       }).catch((err) => {
-        console.warn('unloadAsync failed', err, { loaded: this._loaded,loading: this._loading} );
+        console.log('unloadAsync failed', err, { loaded: this._loaded,loading: this._loading} );
         this._loaded = false;
         reject(err);
       });
