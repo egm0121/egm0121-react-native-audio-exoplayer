@@ -138,7 +138,6 @@ class Sound {
     if (!this._loaded) {
       this._loading = true;
       this._currSource = source;
-      //console.log('start processing ', source);
       const { nativeSource, fullInitialStatus }
         = await _getNativeSourceAndFullInitialStatusForLoadAsync(source, initialStatus);
       console.log('loading sound started');
@@ -251,15 +250,8 @@ class Sound {
         this._subscriptions = [];
         resolve(true);
       }).catch((err) => {
-        console.warn('unloadAsync failed, still clear loaded flag');
+        console.warn('unloadAsync failed', err, { loaded: this._loaded,loading: this._loading} );
         this._loaded = false;
-        this._loading = false;
-        this._currSource = null;
-        this._eventEmitter.removeListener(
-          'didUpdatePlaybackStatus',
-          this._internalStatusUpdateCallback
-        );
-        this._subscriptions = [];
         reject(err);
       });
     });
