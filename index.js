@@ -166,6 +166,7 @@ class Sound {
           };
           const loadError = (error) => {
             console.log('error loading sound',error);
+            clearTimeout(loadTimeout);
             this._loading = false;
             this._loaded = false;
             this._currSource = null;
