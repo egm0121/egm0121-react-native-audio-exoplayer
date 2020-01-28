@@ -151,7 +151,7 @@ class Sound {
             key,
             status,
           ) => {
-            console.log('loading sound success')
+            console.log('loading sound success',this._currSource);
             clearTimeout(loadTimeout);
             this._key = key;
             this._loaded = true;
